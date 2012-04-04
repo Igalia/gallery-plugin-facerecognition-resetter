@@ -1,10 +1,9 @@
 /*
- * gallery_plugin_facerecognition_resetter_p.h
+ * gallery_plugin_facerecognition_resetter_controller.h
  *
  * Copyright (C) 2012 Igalia, S.L.
  *
  * Author: Andres Gomez <agomez@igalia.com>
- *         Simon Pena <spena@igalia.com>
  *
  * This file is part of the Gallery Facerecognition Resetter Plugin.
  *
@@ -23,22 +22,22 @@
  * http://www.gnu.org/licenses/
  */
 
-#ifndef GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
-#define GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
+#ifndef GALLERY_PLUGIN_FACERECOGNITION_RESETTER_CONTROLLER_H
+#define GALLERY_PLUGIN_FACERECOGNITION_RESETTER_CONTROLLER_H
 
-class GalleryPluginFacerecognitionResetterController;
+#include <QObject>
+#include <QString>
 
-class GalleryPluginFacerecognitionResetterPrivate
+class GalleryPluginFacerecognitionResetterController : public QObject
 {
+    Q_OBJECT
 public:
-    //! GalleryPluginFacerecognitionResetterPrivate constructor
-    GalleryPluginFacerecognitionResetterPrivate();
+    explicit GalleryPluginFacerecognitionResetterController();
 
-    //! GalleryPluginFacerecognitionResetterPrivate destructor
-    virtual ~GalleryPluginFacerecognitionResetterPrivate();
+public Q_SLOTS:
+    bool deleteDB(QString &infoText) const;
 
-    //! Controller
-    GalleryPluginFacerecognitionResetterController* m_controller;
 };
 
-#endif // GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
+#endif // GALLERY_PLUGIN_FACERECOGNITION_RESETTER_CONTROLLER_H
+
