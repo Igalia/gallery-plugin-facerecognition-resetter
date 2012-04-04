@@ -37,11 +37,11 @@ GalleryPluginFacerecognitionResetterAboutWidget::GalleryPluginFacerecognitionRes
     m_disclaimerLabel(new MLabel)
 {
     m_disclaimerLabel->setStyleName("FacerecognitionResetterAboutDisclaimer");
-    m_disclaimerLabel->setText("Facerecognition Resetter plugin has been proudly brought to you"
+    m_disclaimerLabel->setText("Facerecognition Resetter plugin<br />has been proudly brought to you "
                                "by <a href=\"http://www.igalia.com\">Igalia</a>");
 
     m_aboutLabel->setStyleName("FacerecognitionResetterAboutLink");
-    m_aboutLabel->setText("<a href=\"about\">About</a>");
+    m_aboutLabel->setText("<br /><a href=\"about\">About</a>");
 
 
     connect(m_disclaimerLabel, SIGNAL(linkActivated(QString)),

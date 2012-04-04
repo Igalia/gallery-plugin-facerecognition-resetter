@@ -35,6 +35,7 @@
 #include <MWidgetCreator>
 
 #include <QGraphicsLinearLayout>
+#include <QSizePolicy>
 
 M_REGISTER_WIDGET_NO_CREATE(GalleryPluginFacerecognitionResetterWidget)
 
@@ -44,9 +45,18 @@ GalleryPluginFacerecognitionResetterWidgetPrivate::GalleryPluginFacerecognitionR
     m_aboutSeparator(new MSeparator),
     m_aboutWidget(new GalleryPluginFacerecognitionResetterAboutWidget)
 {
-    m_resetFacerecognitionDatabaseButton->setText("Reset Facerecognition Database");
+    m_resetFacerecognitionDatabaseButton->setText("Reset");
     m_resetFacerecognitionDatabaseButton->setObjectName("ResetFacerecognitionDatabaseButton");
-    m_resetFacerecognitionDatabaseButton->setStyleName("CommonTopSplitButtonInverted");
+    m_resetFacerecognitionDatabaseButton->setStyleName("CommonSingleButtonInverted");
+
+    m_resultLabel->setAlignment(Qt::AlignCenter);
+    m_resultLabel->setSizePolicy(QSizePolicy::Preferred,
+                                 QSizePolicy::MinimumExpanding);
+    m_resultLabel->setWordWrap(true);
+    m_resultLabel->setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    m_resultLabel->setText("Nothing done yet.");
+    m_resultLabel->setObjectName("ResetFacerecognitionDatabaseLabel");
+    m_resultLabel->setStyleName("CommonBodyTextInverted");
 
     m_aboutSeparator->setStyleName("CommonHeaderDividerInverted");
 }
@@ -63,6 +73,9 @@ GalleryPluginFacerecognitionResetterWidget::GalleryPluginFacerecognitionResetter
     MWidgetController(parent),
     d_ptr(new GalleryPluginFacerecognitionResetterWidgetPrivate)
 {
+    setSizePolicy(QSizePolicy::Preferred,
+                  QSizePolicy::MinimumExpanding);
+
     setObjectName("GalleryPluginFacerecognitionResetterWidget");
     setStyleName("ImageEditorBcControl");
     setContentsMargins(0, 0, 0, 0);
@@ -77,6 +90,8 @@ GalleryPluginFacerecognitionResetterWidget::GalleryPluginFacerecognitionResetter
             SIGNAL(aboutLinkActivated(QString)));
 
     QGraphicsLinearLayout* mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setSizePolicy(QSizePolicy::Preferred,
+                              QSizePolicy::MinimumExpanding);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     mainLayout->addItem(d->m_resetFacerecognitionDatabaseButton);

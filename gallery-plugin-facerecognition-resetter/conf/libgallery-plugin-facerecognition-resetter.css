@@ -1,14 +1,6 @@
 /* overrides to common styles for colour story */
 @const COLOR_ACCENT1 : $COLOR_ACCENT10;
 
-GalleryPluginFacerecognitionResetterWidget MButtonStyle:selected {
-    background-image : "color10-meegotouch-button-inverted-background-selected" $CORNER_MARGINS;
-}
-
-GalleryPluginFacerecognitionResetterWidget MButtonStyle:pressed {
-    background-image : "color10-meegotouch-button-inverted-background-pressed" $CORNER_MARGINS;
-}
-
 GalleryPluginFacerecognitionResetterWidget MSeparatorStyle#CommonHeaderDividerInverted {
     background-image: meegotouch-groupheader-inverted-background 0px 0px 0px 0px;
     span:           0.2mm;

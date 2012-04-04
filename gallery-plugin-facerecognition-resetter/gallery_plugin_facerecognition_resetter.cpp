@@ -44,8 +44,8 @@
 #include <QUrl>
 #include <QTextOption>
 
-static const int PORTRAIT_HEIGHT        = 224;
-static const int LANDSCAPE_HEIGHT       = 170;
+static const int PORTRAIT_HEIGHT        = 250;
+static const int LANDSCAPE_HEIGHT       = 214;
 static const int TAP_DISTANCE           = 20;
 static const int INFO_BANNER_TIMEOUT    = 2000;
 
