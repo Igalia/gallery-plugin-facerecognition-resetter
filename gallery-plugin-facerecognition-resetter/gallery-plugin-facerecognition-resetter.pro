@@ -1,3 +1,7 @@
+! include( ../common.pri ) {
+    error( "Couldn't find the common.pri file!" )
+}
+
 TEMPLATE        = lib
 QMAKE_LFLAGS   += -Wl,--as-needed
 QMAKE_CXXFLAGS += -Werror -Wall -W
@@ -18,13 +22,20 @@ contains( debug, yes ) {
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
+# Relative path definitions for face recognition
+DEFINES += GALLERYCORE_DATA_ROOT_DIR=\\\"$${GALLERYCORE_DATA_ROOT_DIR}\\\"
+DEFINES += GALLERYCORE_DATA_DATA_DIR=\\\"$${GALLERYCORE_DATA_DATA_DIR}\\\"
+DEFINES += FACE_RECOGNITION_DATABASE_FILENAME=\\\"$${FACE_RECOGNITION_DATABASE_FILENAME}\\\"
+
 HEADERS += gallery_plugin_facerecognition_resetter.h \
            gallery_plugin_facerecognition_resetter_p.h \
+           gallery_plugin_facerecognition_resetter_controller.h \
            gallery_plugin_facerecognition_resetter_widget.h \
            gallery_plugin_facerecognition_resetter_widget_p.h \
            gallery_plugin_facerecognition_resetter_about_widget.h
 
 SOURCES += gallery_plugin_facerecognition_resetter.cpp \
+           gallery_plugin_facerecognition_resetter_controller.cpp \
            gallery_plugin_facerecognition_resetter_widget.cpp \
            gallery_plugin_facerecognition_resetter_about_widget.cpp
 

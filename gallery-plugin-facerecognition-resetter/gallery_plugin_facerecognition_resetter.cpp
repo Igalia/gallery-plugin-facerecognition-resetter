@@ -25,6 +25,7 @@
 
 #include "gallery_plugin_facerecognition_resetter.h"
 #include "gallery_plugin_facerecognition_resetter_p.h"
+#include "gallery_plugin_facerecognition_resetter_controller.h"
 #include "gallery_plugin_facerecognition_resetter_widget.h"
 
 #include <galleryedituiprovider.h>
@@ -51,12 +52,14 @@ static const int INFO_BANNER_TIMEOUT    = 2000;
 M_LIBRARY
 
 
-GalleryPluginFacerecognitionResetterPrivate::GalleryPluginFacerecognitionResetterPrivate()
+GalleryPluginFacerecognitionResetterPrivate::GalleryPluginFacerecognitionResetterPrivate() :
+    m_controller(new GalleryPluginFacerecognitionResetterController())
 {
 }
 
 GalleryPluginFacerecognitionResetterPrivate::~GalleryPluginFacerecognitionResetterPrivate()
 {
+    delete m_controller;
 }
 
 GalleryPluginFacerecognitionResetter::GalleryPluginFacerecognitionResetter(QObject* parent):
@@ -111,7 +114,7 @@ QGraphicsWidget* GalleryPluginFacerecognitionResetter::createToolBarWidget(QGrap
 {
     GalleryPluginFacerecognitionResetterWidget* pluginWidget =
         new GalleryPluginFacerecognitionResetterWidget(parent);
-    connect(pluginWidget, SIGNAL(applicationOrientationChanged()),
+    connect(pluginWidget, SIGNAL(resetFacerecognitionDatabaseButtonClicked()),
             SLOT(performEditOperation()));
     connect(pluginWidget, SIGNAL(aboutLinkActivated(QString)),
             SLOT(onAboutLinkActivated(QString)));
@@ -125,7 +128,7 @@ bool GalleryPluginFacerecognitionResetter::receiveMouseEvent(QGraphicsSceneMouse
         && event->type() == QEvent::GraphicsSceneMouseRelease
         && event->button() == Qt::LeftButton
         && (event->scenePos() - event->buttonDownScenePos(Qt::LeftButton)).manhattanLength() < TAP_DISTANCE) {
-        showInfoBanner("Plugin disabled for this image size");
+        showInfoBanner("Edition disabled.\nJust try to delete the Facerecognition database");
     }
 
     return false;
@@ -146,26 +149,28 @@ const QSize GalleryPluginFacerecognitionResetter::toolBarWidgetSize(const M::Ori
 
 void GalleryPluginFacerecognitionResetter::performEditOperation()
 {
-/* Delete the database */
+    Q_D(GalleryPluginFacerecognitionResetter);
+    if (d->m_controller) {
+        GalleryPluginFacerecognitionResetterWidget* widget =
+            static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
+        QString infoText;
+
+        if (d->m_controller->deleteDB(infoText)) {
+            showInfoBanner(infoText + "\nPlease, close Gallery immediately");
+            widget->setResultLabelText(infoText + "<br />Please, close Gallery immediately");
+        } else {
+            showInfoBanner(infoText);
+            widget->setResultLabelText(infoText);
+        }
+    }
 }
 
 void GalleryPluginFacerecognitionResetter::activate()
 {
-    if (editUiProvider()) {
-        showMessageBox("Tilt Shift plugin limitations",
-                       "Gallery Tilt Shift plugin is currently limited to "
-                       "small images (512x512)<br />"
-                       "For a given image:"
-                       "<ol>"
-                       "<li>Scale it or crop it</li>"
-                       "<li>Save it with a different name</li>"
-                       "<li>Apply the filter to the new one</li>"
-                       "</ol>");
-
-        GalleryPluginFacerecognitionResetterWidget* widget =
-            static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
-        widget->setEnabled(false);
-    }
+    showMessageBox("Plugin instructions",
+                   "This is just a dummy plugin for resetting "
+                   "the Facerecognition database.<br />"
+                   "Just click on the reset button");
 }
 
 void GalleryPluginFacerecognitionResetter::onAboutLinkActivated(const QString &link)
