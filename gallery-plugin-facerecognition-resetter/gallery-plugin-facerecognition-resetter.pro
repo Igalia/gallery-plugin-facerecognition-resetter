@@ -33,9 +33,9 @@ OTHER_FILES += \
 
 target.path = /usr/lib/gallery
 
-# include($$[QT_INSTALL_DATA]/mkspecs/features/meegotouch_defines.prf)
-# meegotouch.files = conf/libgallery-plugin-facerecognition-resetter.css
-# meegotouch.path = $${M_THEME_DIR}/base/meegotouch/libgallery-plugin-facerecognition-resetter/style
+include($$[QT_INSTALL_DATA]/mkspecs/features/meegotouch_defines.prf)
+meegotouch.files = conf/libgallery-plugin-facerecognition-resetter.css
+meegotouch.path = $${M_THEME_DIR}/base/meegotouch/libgallery-plugin-facerecognition-resetter/style
 
 editicon.files = data/icon-m-image-edit-facerecognition-resetter.png
 editicon.path = /usr/share/themes/base/meegotouch/icons
@@ -45,4 +45,5 @@ icon.path = /usr/share/icons/hicolor/64x64/apps/
 
 INSTALLS += target \
             editicon \
-            icon
+            icon \
+            meegotouch
