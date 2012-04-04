@@ -1,0 +1,4 @@
+gallery-plugin-facerecognition-resetter/*.so usr/lib/gallery
+gallery-plugin-facerecognition-resetter/conf/*.css usr/share/themes/base/meegotouch/libgallery-plugin-facerecognition-resetter/style
+gallery-plugin-facerecognition-resetter/data/icon-m-image-edit-facerecognition-resetter.png usr/share/themes/base/meegotouch/icons
+gallery-plugin-facerecognition-resetter/data/icon-l-facerecognition-resetter.png usr/share/icons/hicolor/64x64/apps/
