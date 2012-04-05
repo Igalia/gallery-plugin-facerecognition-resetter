@@ -44,6 +44,7 @@
 #include <QUrl>
 #include <QTextOption>
 
+static const int MENU_INDEX             = 15;
 static const int PORTRAIT_HEIGHT        = 250;
 static const int LANDSCAPE_HEIGHT       = 214;
 static const int TAP_DISTANCE           = 20;
@@ -82,7 +83,7 @@ QString GalleryPluginFacerecognitionResetter::name() const
 
 int GalleryPluginFacerecognitionResetter::menuIndex() const
 {
-    return 10;
+    return MENU_INDEX;
 }
 
 QString GalleryPluginFacerecognitionResetter::iconID() const
