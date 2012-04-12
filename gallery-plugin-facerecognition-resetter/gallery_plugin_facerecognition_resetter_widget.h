@@ -51,6 +51,14 @@ Q_SIGNALS:
     //! database is clicked
     void resetFacerecognitionDatabaseButtonClicked();
 
+    //! Emitted when the button for protecting the facerecognition
+    //! database is clicked
+    void protectFacerecognitionDatabaseButtonClicked();
+
+    //! Emitted when the button for unprotecting the facerecognition
+    //! database is clicked
+    void unprotectFacerecognitionDatabaseButtonClicked();
+
     //! Emitted when a link in the about notice was activated
     void aboutLinkActivated(const QString& link);
 

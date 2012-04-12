@@ -40,6 +40,13 @@ public:
     //! \param infoText in which to store the result message.
     //! \return true on success, false otherwise
     bool deleteDB(QString &infoText) const;
+
+    //! Protects the facerecognition dabatase.
+    //!
+    //! \param protect whether to protect the database or not.
+    //! \param infoText in which to store the result message.
+    //! \return true on success, false otherwise
+    bool protectDB(bool protect, QString &infoText) const;
 };
 
 #endif // GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
