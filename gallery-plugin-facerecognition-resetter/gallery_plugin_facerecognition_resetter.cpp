@@ -52,6 +52,7 @@ static const char* xdg_data_home = getenv("XDG_DATA_HOME");
 static const char* data_root_dir = GALLERYCORE_DATA_ROOT_DIR;
 static const char* data_data_dir = GALLERYCORE_DATA_DATA_DIR;
 static const char* database_filename = FACE_RECOGNITION_DATABASE_FILENAME;
+static const char* database_journal_filename = FACE_RECOGNITION_DATABASE_FILENAME"-journal";
 static const int MENU_INDEX             = 15;
 static const int PORTRAIT_HEIGHT        = 250;
 static const int LANDSCAPE_HEIGHT       = 214;
@@ -73,30 +74,44 @@ bool GalleryPluginFacerecognitionResetterPrivate::deleteDB(QString &infoText) co
 {
     bool result = false;
 
+    infoText = QString("");
+
     QDir dir(xdg_data_home);
     if (!dir.exists(data_root_dir)) {
-        infoText = QString("Directory didn't exist beforehand.");
+        infoText.append("Directory didn't exist beforehand.");
         goto clean;
     }
 
     dir.cd(data_root_dir);
     if (!dir.exists(data_data_dir)) {
-        infoText = QString("Directory didn't exist beforehand.");
+        infoText.append("Directory didn't exist beforehand.");
         goto clean;
     }
 
     dir.cd(data_data_dir);
     if (dir.exists(database_filename)) {
         if (!dir.remove(database_filename)) {
-            infoText = QString("Failed deleting the DB.");
+            infoText.append("Failed deleting the DB.");
             return result;
         } else {
-            infoText = QString("Succeeded deleting the DB.");
+            infoText.append("Succeeded deleting the DB.");
             result = true;
         }
     } else {
-        infoText = QString("Face Recognition data base "
-                         "didn't exist beforehand.");
+        infoText.append("DB didn't exist beforehand.");
+    }
+
+    if (dir.exists(database_journal_filename)) {
+        if (!dir.remove(database_journal_filename)) {
+            infoText.append("Failed deleting the DB journal.");
+            result = false;
+            return result;
+        } else {
+            infoText.append("Succeeded deleting the DB journal.");
+            result = true;
+        }
+    } else {
+        infoText.append(" DB journal didn't exist beforehand.");
     }
 
     dir.cdUp();
