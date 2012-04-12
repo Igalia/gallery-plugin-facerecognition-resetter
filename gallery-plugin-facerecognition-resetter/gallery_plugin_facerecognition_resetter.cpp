@@ -46,6 +46,12 @@
 
 #ifdef Q_OS_LINUX
 #include <stdlib.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
 #endif // Q_OS_LINUX
 
 static const char* xdg_data_home = getenv("XDG_DATA_HOME");
@@ -53,9 +59,13 @@ static const char* data_root_dir = GALLERYCORE_DATA_ROOT_DIR;
 static const char* data_data_dir = GALLERYCORE_DATA_DATA_DIR;
 static const char* database_filename = FACE_RECOGNITION_DATABASE_FILENAME;
 static const char* database_journal_filename = FACE_RECOGNITION_DATABASE_FILENAME"-journal";
+static const char* core_user = GALLERYCORE_USER;
+static const char* core_group = GALLERYCORE_GROUP;
+static const char* regular_user = REGULAR_USER;
+static const char* regular_group = REGULAR_GROUP;
 static const int MENU_INDEX             = 15;
-static const int PORTRAIT_HEIGHT        = 250;
-static const int LANDSCAPE_HEIGHT       = 214;
+static const int PORTRAIT_HEIGHT        = 475;
+static const int LANDSCAPE_HEIGHT       = 250;
 static const int TAP_DISTANCE           = 20;
 static const int INFO_BANNER_TIMEOUT    = 2000;
 
@@ -128,6 +138,166 @@ clean:
     return result;
 }
 
+bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QString &infoText) const
+{
+    bool result = false;
+    struct passwd *pwd = 0;
+    struct group *grd = 0;
+    QFile::Permissions directoryPermissions;
+    QFile::Permissions filePermissions;
+
+    if (protect) {
+
+#ifdef Q_OS_LINUX
+
+        pwd = getpwnam(core_user);
+        grd = getgrnam(core_group);
+
+#endif // Q_OS_LINUX
+
+        directoryPermissions = QFile::ReadGroup
+            | QFile::WriteGroup
+            | QFile::ExeGroup;
+        filePermissions = QFile::ReadGroup
+            | QFile::WriteGroup;
+    } else {
+
+#ifdef Q_OS_LINUX
+
+        pwd = getpwnam(regular_user);
+        grd = getgrnam(regular_group);
+
+#endif // Q_OS_LINUX
+
+        directoryPermissions = QFile::ReadOwner
+            | QFile::WriteOwner
+            | QFile::ExeOwner
+            | QFile::ReadGroup
+            | QFile::WriteGroup
+            | QFile::ExeGroup
+            | QFile::ReadOther
+            | QFile::WriteOther
+            | QFile::ExeOther;
+        filePermissions = QFile::ReadOwner
+            | QFile::WriteOwner
+            | QFile::ReadGroup
+            | QFile::WriteGroup
+            | QFile::ReadOther
+            | QFile::WriteOther;
+    }
+
+    infoText = QString("");
+
+    QDir dir(xdg_data_home);
+    if (!dir.exists(data_root_dir)) {
+        infoText.append("Directory didn't exist beforehand.");
+        goto clean;
+    }
+
+    dir.cd(data_root_dir);
+    if (!dir.exists(data_data_dir)) {
+        infoText.append("Directory didn't exist beforehand.");
+        goto clean;
+    }
+
+#ifdef Q_OS_LINUX
+
+    if (NULL != pwd) {
+        if (NULL != grd) {
+            if (0 == chown(dir.absoluteFilePath(data_data_dir).toUtf8().constData(),
+                           pwd->pw_uid,
+                           grd->gr_gid)) {
+                infoText.append("Owner of the parent directory changed.");
+            } else {
+                infoText.append("Failed changing owner of the parent directory.");
+                goto clean;
+            }
+        }
+    }
+
+#endif // Q_OS_LINUX
+
+    if (QFile::setPermissions(dir.absoluteFilePath(data_data_dir),
+                              directoryPermissions)) {
+        infoText.append(" Permissions of the parent directory changed.");
+    } else {
+        infoText.append(" Failed changing the permissions of the parent directory.");
+        goto clean;
+    }
+
+    dir.cd(data_data_dir);
+    if (dir.exists(database_filename)) {
+
+#ifdef Q_OS_LINUX
+
+        if (NULL != pwd) {
+            if (NULL != grd) {
+                if (0 == chown(dir.absoluteFilePath(database_filename).toUtf8().constData(),
+                               pwd->pw_uid,
+                               grd->gr_gid)) {
+                    infoText.append(" Owner of the DB changed.");
+                } else {
+                    infoText.append(" Failed changing the owner of the DB.");
+                    goto clean;
+                }
+            }
+        }
+
+#endif // Q_OS_LINUX
+
+        if (QFile::setPermissions(dir.absoluteFilePath(database_filename),
+                                  filePermissions)) {
+            infoText.append(" Permissions of the DB changed.");
+            result = true;
+        } else {
+            infoText.append(" Failed changing the permissions of the DB.");
+            goto clean;
+        }
+
+    } else {
+        infoText.append(" DB didn't exist beforehand.");
+        goto clean;
+    }
+
+    // Journal file
+    if (dir.exists(database_journal_filename)) {
+
+#ifdef Q_OS_LINUX
+
+        if (NULL != pwd) {
+            if (NULL != grd) {
+                if (0 == chown(dir.absoluteFilePath(database_journal_filename).toUtf8().constData(),
+                               pwd->pw_uid,
+                               grd->gr_gid)) {
+                    infoText.append(" Owner of the DB journal changed.");
+                } else {
+                    infoText.append(" Failed changing the owner of the DB journal.");
+                    goto clean;
+                }
+            }
+        }
+
+#endif // Q_OS_LINUX
+
+        if (QFile::setPermissions(dir.absoluteFilePath(database_journal_filename),
+                                  filePermissions)) {
+            infoText.append(" Permissions of the DB journal changed.");
+        } else {
+            infoText.append(" Failed changing the permissions of the DB journal.");
+            goto clean;
+        }
+
+    } else {
+        infoText.append(" DB journal didn't exist beforehand.");
+        goto clean;
+    }
+
+
+clean:
+
+    return result;
+}
+
 GalleryPluginFacerecognitionResetter::GalleryPluginFacerecognitionResetter(QObject* parent):
     GalleryEditPlugin(parent),
     d_ptr(new GalleryPluginFacerecognitionResetterPrivate())
@@ -173,6 +343,10 @@ QGraphicsWidget* GalleryPluginFacerecognitionResetter::createToolBarWidget(QGrap
         new GalleryPluginFacerecognitionResetterWidget(parent);
     connect(pluginWidget, SIGNAL(resetFacerecognitionDatabaseButtonClicked()),
             SLOT(performEditOperation()));
+    connect(pluginWidget, SIGNAL(protectFacerecognitionDatabaseButtonClicked()),
+            SLOT(protectDBOperation()));
+    connect(pluginWidget, SIGNAL(unprotectFacerecognitionDatabaseButtonClicked()),
+            SLOT(unprotectDBOperation()));
     connect(pluginWidget, SIGNAL(aboutLinkActivated(QString)),
             SLOT(onAboutLinkActivated(QString)));
 
@@ -185,7 +359,9 @@ bool GalleryPluginFacerecognitionResetter::receiveMouseEvent(QGraphicsSceneMouse
         && event->type() == QEvent::GraphicsSceneMouseRelease
         && event->button() == Qt::LeftButton
         && (event->scenePos() - event->buttonDownScenePos(Qt::LeftButton)).manhattanLength() < TAP_DISTANCE) {
-        showInfoBanner("Edition disabled.\nJust try to delete the Facerecognition database");
+        showInfoBanner("Edition disabled.\nJust try to delete, "
+                       "and/or un/protect "
+                       "the Facerecognition database");
     }
 
     return false;
@@ -212,10 +388,10 @@ void GalleryPluginFacerecognitionResetter::performEditOperation()
     QString infoText;
 
     if (d->deleteDB(infoText)) {
-        showInfoBanner(infoText + "\nPlease, close Gallery immediately");
+        showInfoBanner("Success!!!\nPlease, close Gallery immediately");
         widget->setResultLabelText(infoText + "<br />Please, close Gallery immediately");
     } else {
-        showInfoBanner(infoText);
+        showInfoBanner("Failed. :(");
         widget->setResultLabelText(infoText);
     }
 }
@@ -224,8 +400,42 @@ void GalleryPluginFacerecognitionResetter::activate()
 {
     showMessageBox("Plugin instructions",
                    "This is just a dummy plugin for resetting "
+                   "or un/protecting "
                    "the Facerecognition database.<br />"
-                   "Just click on the reset button");
+                   "Just click on the Reset, "
+                   "Protect and/or Unprotect button/s.");
+}
+
+void GalleryPluginFacerecognitionResetter::protectDBOperation()
+{
+    Q_D(GalleryPluginFacerecognitionResetter);
+    GalleryPluginFacerecognitionResetterWidget* widget =
+        static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
+    QString infoText;
+
+    if (d->protectDB(true, infoText)) {
+        showInfoBanner("Success!!!");
+        widget->setResultLabelText(infoText);
+    } else {
+        showInfoBanner("Failed. :(");
+        widget->setResultLabelText(infoText);
+    }
+}
+
+void GalleryPluginFacerecognitionResetter::unprotectDBOperation()
+{
+    Q_D(GalleryPluginFacerecognitionResetter);
+    GalleryPluginFacerecognitionResetterWidget* widget =
+        static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
+    QString infoText;
+
+    if (d->protectDB(false, infoText)) {
+        showInfoBanner("Success!!!");
+        widget->setResultLabelText(infoText);
+    } else {
+        showInfoBanner("Failed. :(");
+        widget->setResultLabelText(infoText);
+    }
 }
 
 void GalleryPluginFacerecognitionResetter::onAboutLinkActivated(const QString &link)

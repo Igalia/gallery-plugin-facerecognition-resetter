@@ -26,6 +26,8 @@
 #ifndef GALLERY_PLUGIN_FACERECOGNITION_RESETTER_WIDGET_P_H
 #define GALLERY_PLUGIN_FACERECOGNITION_RESETTER_WIDGET_P_H
 
+class MLayout;
+class MLinearLayoutPolicy;
 class MButton;
 class MLabel;
 class MSeparator;
@@ -42,8 +44,23 @@ public:
     virtual ~GalleryPluginFacerecognitionResetterWidgetPrivate();
 
 public:
+    //! Focus area layout
+    MLayout* m_orientationLayout;
+
+    //! Landscape policy for the focus area layout
+    MLinearLayoutPolicy* m_landscapePolicy;
+
+    //! Portrait policy for the focus area layout
+    MLinearLayoutPolicy* m_portraitPolicy;
+
     //! Button to remove the facerecognition database
     MButton* m_resetFacerecognitionDatabaseButton;
+
+    //! Button to protect the facerecognition database
+    MButton* m_protectFacerecognitionDatabaseButton;
+
+    //! Button to unprotect the facerecognition database
+    MButton* m_unprotectFacerecognitionDatabaseButton;
 
     //! Label with the result of the operation
     MLabel* m_resultLabel;

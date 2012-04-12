@@ -28,6 +28,8 @@
 #include "gallery_plugin_facerecognition_resetter_about_widget.h"
 
 #include <MApplication>
+#include <MLayout>
+#include <MLinearLayoutPolicy>
 #include <MButton>
 #include <MLabel>
 #include <MSeparator>
@@ -40,14 +42,51 @@
 M_REGISTER_WIDGET_NO_CREATE(GalleryPluginFacerecognitionResetterWidget)
 
 GalleryPluginFacerecognitionResetterWidgetPrivate::GalleryPluginFacerecognitionResetterWidgetPrivate() :
+    m_orientationLayout(new MLayout),
+    m_landscapePolicy(new MLinearLayoutPolicy(m_orientationLayout, Qt::Horizontal)),
+    m_portraitPolicy(new MLinearLayoutPolicy(m_orientationLayout, Qt::Vertical)),
     m_resetFacerecognitionDatabaseButton(new MButton),
+    m_protectFacerecognitionDatabaseButton(new MButton),
+    m_unprotectFacerecognitionDatabaseButton(new MButton),
     m_resultLabel(new MLabel),
     m_aboutSeparator(new MSeparator),
     m_aboutWidget(new GalleryPluginFacerecognitionResetterAboutWidget)
 {
+    m_orientationLayout->setContentsMargins(0, 0, 0, 0);
+    m_orientationLayout->setAnimation(0);
+
+    m_landscapePolicy->setContentsMargins(128, 0, 128, 0);
+    m_landscapePolicy->setNotifyWidgetsOfLayoutPositionEnabled(true);
+    m_landscapePolicy->setSpacing(0);
+
+    m_portraitPolicy->setContentsMargins(64, 0, 64, 0);
+    m_portraitPolicy->setNotifyWidgetsOfLayoutPositionEnabled(true);
+    m_portraitPolicy->setSpacing(0);
+
+    m_orientationLayout->setLandscapePolicy(m_landscapePolicy);
+    m_orientationLayout->setPortraitPolicy(m_portraitPolicy);
+
     m_resetFacerecognitionDatabaseButton->setText("Reset");
     m_resetFacerecognitionDatabaseButton->setObjectName("ResetFacerecognitionDatabaseButton");
     m_resetFacerecognitionDatabaseButton->setStyleName("CommonSingleButtonInverted");
+
+    m_protectFacerecognitionDatabaseButton->setText("Protect");
+    m_protectFacerecognitionDatabaseButton->setObjectName("ProtectFacerecognitionDatabaseButton");
+    m_protectFacerecognitionDatabaseButton->setStyleName("CommonSingleButtonInverted");
+
+    m_unprotectFacerecognitionDatabaseButton->setText("Unprotect");
+    m_unprotectFacerecognitionDatabaseButton->setObjectName("UnprotectFacerecognitionDatabaseButton");
+    m_unprotectFacerecognitionDatabaseButton->setStyleName("CommonSingleButtonInverted");
+
+    m_landscapePolicy->addItem(m_resetFacerecognitionDatabaseButton);
+    m_portraitPolicy->addItem(m_resetFacerecognitionDatabaseButton,
+                              Qt::AlignCenter);
+    m_landscapePolicy->addItem(m_protectFacerecognitionDatabaseButton);
+    m_portraitPolicy->addItem(m_protectFacerecognitionDatabaseButton,
+                              Qt::AlignCenter);
+    m_landscapePolicy->addItem(m_unprotectFacerecognitionDatabaseButton);
+    m_portraitPolicy->addItem(m_unprotectFacerecognitionDatabaseButton,
+                              Qt::AlignCenter);
 
     m_resultLabel->setAlignment(Qt::AlignCenter);
     m_resultLabel->setSizePolicy(QSizePolicy::Preferred,
@@ -64,6 +103,11 @@ GalleryPluginFacerecognitionResetterWidgetPrivate::GalleryPluginFacerecognitionR
 GalleryPluginFacerecognitionResetterWidgetPrivate::~GalleryPluginFacerecognitionResetterWidgetPrivate()
 {
     delete m_resetFacerecognitionDatabaseButton;
+    delete m_protectFacerecognitionDatabaseButton;
+    delete m_unprotectFacerecognitionDatabaseButton;
+    delete m_portraitPolicy;
+    delete m_landscapePolicy;
+    delete m_orientationLayout;
     delete m_resultLabel;
     delete m_aboutSeparator;
     delete m_aboutWidget;
@@ -85,6 +129,12 @@ GalleryPluginFacerecognitionResetterWidget::GalleryPluginFacerecognitionResetter
     connect(d->m_resetFacerecognitionDatabaseButton,
             SIGNAL(clicked()),
             SIGNAL(resetFacerecognitionDatabaseButtonClicked()));
+    connect(d->m_protectFacerecognitionDatabaseButton,
+            SIGNAL(clicked()),
+            SIGNAL(protectFacerecognitionDatabaseButtonClicked()));
+    connect(d->m_unprotectFacerecognitionDatabaseButton,
+            SIGNAL(clicked()),
+            SIGNAL(unprotectFacerecognitionDatabaseButtonClicked()));
     connect(d->m_aboutWidget,
             SIGNAL(linkActivated(QString)),
             SIGNAL(aboutLinkActivated(QString)));
@@ -94,9 +144,8 @@ GalleryPluginFacerecognitionResetterWidget::GalleryPluginFacerecognitionResetter
                               QSizePolicy::MinimumExpanding);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    mainLayout->addItem(d->m_resetFacerecognitionDatabaseButton);
-    mainLayout->setAlignment(d->m_resetFacerecognitionDatabaseButton,
-                             Qt::AlignCenter);
+    mainLayout->addItem(d->m_orientationLayout);
+    mainLayout->setAlignment(d->m_orientationLayout, Qt::AlignCenter);
     mainLayout->addItem(d->m_resultLabel);
     mainLayout->setAlignment(d->m_resultLabel, Qt::AlignCenter);
     mainLayout->addItem(d->m_aboutSeparator);

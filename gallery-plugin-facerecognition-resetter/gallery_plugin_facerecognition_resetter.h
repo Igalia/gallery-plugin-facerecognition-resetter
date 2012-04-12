@@ -74,6 +74,12 @@ public Q_SLOTS:
     //! \reimp
     void activate();
 
+    //! Invoked when pushed the protect DB button
+    void protectDBOperation();
+
+    //! Invoked when pushed the unprotect DB button
+    void unprotectDBOperation();
+
     //! Invoked when a link in the about notice has been activated
     //! \param link The activated link
     void onAboutLinkActivated(const QString& link);
