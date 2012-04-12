@@ -1,3 +1,11 @@
+gallery-plugin-facerecognition-resetter (0.0.2) unstable; urgency=low
+
+  * Added resetting also the journal file.
+  * Added the possibility of protectin or unprotecting the database and
+    related elements.
+
+ -- Andres Gomez <agomez@igalia.com>  Thu, 12 Apr 2012 18:23:44 +0300
+
 gallery-plugin-facerecognition-resetter (0.0.1) unstable; urgency=low
 
   * Initial release
