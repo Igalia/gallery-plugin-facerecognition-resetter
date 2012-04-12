@@ -26,8 +26,6 @@
 #ifndef GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
 #define GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H
 
-class GalleryPluginFacerecognitionResetterController;
-
 class GalleryPluginFacerecognitionResetterPrivate
 {
 public:
@@ -37,8 +35,11 @@ public:
     //! GalleryPluginFacerecognitionResetterPrivate destructor
     virtual ~GalleryPluginFacerecognitionResetterPrivate();
 
-    //! Controller
-    GalleryPluginFacerecognitionResetterController* m_controller;
+    //! Deletes the facerecognition dabatase.
+    //!
+    //! \param infoText in which to store the result message.
+    //! \return true on success, false otherwise
+    bool deleteDB(QString &infoText) const;
 };
 
 #endif // GALLERY_PLUGIN_FACERECOGNITION_RESETTER_P_H

@@ -25,7 +25,6 @@
 
 #include "gallery_plugin_facerecognition_resetter.h"
 #include "gallery_plugin_facerecognition_resetter_p.h"
-#include "gallery_plugin_facerecognition_resetter_controller.h"
 #include "gallery_plugin_facerecognition_resetter_widget.h"
 
 #include <galleryedituiprovider.h>
@@ -43,7 +42,16 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QUrl>
 #include <QTextOption>
+#include <QDir>
 
+#ifdef Q_OS_LINUX
+#include <stdlib.h>
+#endif // Q_OS_LINUX
+
+static const char* xdg_data_home = getenv("XDG_DATA_HOME");
+static const char* data_root_dir = GALLERYCORE_DATA_ROOT_DIR;
+static const char* data_data_dir = GALLERYCORE_DATA_DATA_DIR;
+static const char* database_filename = FACE_RECOGNITION_DATABASE_FILENAME;
 static const int MENU_INDEX             = 15;
 static const int PORTRAIT_HEIGHT        = 250;
 static const int LANDSCAPE_HEIGHT       = 214;
@@ -53,14 +61,56 @@ static const int INFO_BANNER_TIMEOUT    = 2000;
 M_LIBRARY
 
 
-GalleryPluginFacerecognitionResetterPrivate::GalleryPluginFacerecognitionResetterPrivate() :
-    m_controller(new GalleryPluginFacerecognitionResetterController())
+GalleryPluginFacerecognitionResetterPrivate::GalleryPluginFacerecognitionResetterPrivate()
 {
 }
 
 GalleryPluginFacerecognitionResetterPrivate::~GalleryPluginFacerecognitionResetterPrivate()
 {
-    delete m_controller;
+}
+
+bool GalleryPluginFacerecognitionResetterPrivate::deleteDB(QString &infoText) const
+{
+    bool result = false;
+
+    QDir dir(xdg_data_home);
+    if (!dir.exists(data_root_dir)) {
+        infoText = QString("Directory didn't exist beforehand.");
+        goto clean;
+    }
+
+    dir.cd(data_root_dir);
+    if (!dir.exists(data_data_dir)) {
+        infoText = QString("Directory didn't exist beforehand.");
+        goto clean;
+    }
+
+    dir.cd(data_data_dir);
+    if (dir.exists(database_filename)) {
+        if (!dir.remove(database_filename)) {
+            infoText = QString("Failed deleting the DB.");
+            return result;
+        } else {
+            infoText = QString("Succeeded deleting the DB.");
+            result = true;
+        }
+    } else {
+        infoText = QString("Face Recognition data base "
+                         "didn't exist beforehand.");
+    }
+
+    dir.cdUp();
+    if (!dir.rmdir(data_data_dir)) {
+        infoText.append(" Failed deleting the parent directory.");
+        return result;
+    }
+
+    infoText.append(" Succeeded deleting the parent directory.");
+
+
+clean:
+
+    return result;
 }
 
 GalleryPluginFacerecognitionResetter::GalleryPluginFacerecognitionResetter(QObject* parent):
@@ -142,18 +192,16 @@ const QSize GalleryPluginFacerecognitionResetter::toolBarWidgetSize(const M::Ori
 void GalleryPluginFacerecognitionResetter::performEditOperation()
 {
     Q_D(GalleryPluginFacerecognitionResetter);
-    if (d->m_controller) {
-        GalleryPluginFacerecognitionResetterWidget* widget =
-            static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
-        QString infoText;
+    GalleryPluginFacerecognitionResetterWidget* widget =
+        static_cast<GalleryPluginFacerecognitionResetterWidget*>(toolBarWidget());
+    QString infoText;
 
-        if (d->m_controller->deleteDB(infoText)) {
-            showInfoBanner(infoText + "\nPlease, close Gallery immediately");
-            widget->setResultLabelText(infoText + "<br />Please, close Gallery immediately");
-        } else {
-            showInfoBanner(infoText);
-            widget->setResultLabelText(infoText);
-        }
+    if (d->deleteDB(infoText)) {
+        showInfoBanner(infoText + "\nPlease, close Gallery immediately");
+        widget->setResultLabelText(infoText + "<br />Please, close Gallery immediately");
+    } else {
+        showInfoBanner(infoText);
+        widget->setResultLabelText(infoText);
     }
 }
 
