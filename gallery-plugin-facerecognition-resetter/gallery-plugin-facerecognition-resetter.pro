@@ -29,13 +29,11 @@ DEFINES += FACE_RECOGNITION_DATABASE_FILENAME=\\\"$${FACE_RECOGNITION_DATABASE_F
 
 HEADERS += gallery_plugin_facerecognition_resetter.h \
            gallery_plugin_facerecognition_resetter_p.h \
-           gallery_plugin_facerecognition_resetter_controller.h \
            gallery_plugin_facerecognition_resetter_widget.h \
            gallery_plugin_facerecognition_resetter_widget_p.h \
            gallery_plugin_facerecognition_resetter_about_widget.h
 
 SOURCES += gallery_plugin_facerecognition_resetter.cpp \
-           gallery_plugin_facerecognition_resetter_controller.cpp \
            gallery_plugin_facerecognition_resetter_widget.cpp \
            gallery_plugin_facerecognition_resetter_about_widget.cpp
 
