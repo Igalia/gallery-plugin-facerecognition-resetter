@@ -47,6 +47,7 @@
 #ifdef Q_OS_LINUX
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
@@ -143,6 +144,7 @@ bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QStrin
     bool result = false;
     struct passwd *pwd = 0;
     struct group *grd = 0;
+    mode_t mode = 0;
     QFile::Permissions directoryPermissions;
     QFile::Permissions filePermissions;
 
@@ -152,13 +154,16 @@ bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QStrin
 
         pwd = getpwnam(core_user);
         grd = getgrnam(core_group);
+        mode = S_ISGID | S_IRGRP | S_IWGRP | S_IXGRP;
 
 #endif // Q_OS_LINUX
 
         directoryPermissions = QFile::ReadGroup
             | QFile::WriteGroup
             | QFile::ExeGroup;
-        filePermissions = QFile::ReadGroup
+        filePermissions = QFile::ReadOwner
+            | QFile::WriteOwner
+            | QFile::ReadGroup
             | QFile::WriteGroup;
     } else {
 
@@ -166,6 +171,9 @@ bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QStrin
 
         pwd = getpwnam(regular_user);
         grd = getgrnam(regular_group);
+        mode = S_IRUSR | S_IWUSR | S_IXUSR
+            | S_IRGRP | S_IWGRP | S_IXGRP
+            | S_IROTH | S_IWOTH | S_IXOTH;
 
 #endif // Q_OS_LINUX
 
@@ -215,7 +223,15 @@ bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QStrin
         }
     }
 
-#endif // Q_OS_LINUX
+    if (0 == chmod(dir.absoluteFilePath(data_data_dir).toUtf8().constData(),
+                   mode)) {
+        infoText.append(" Permissions of the parent directory changed.");
+    } else {
+        infoText.append(" Failed changing the permissions of the parent directory.");
+        goto clean;
+    }
+
+#else
 
     if (QFile::setPermissions(dir.absoluteFilePath(data_data_dir),
                               directoryPermissions)) {
@@ -224,6 +240,8 @@ bool GalleryPluginFacerecognitionResetterPrivate::protectDB(bool protect, QStrin
         infoText.append(" Failed changing the permissions of the parent directory.");
         goto clean;
     }
+
+#endif // Q_OS_LINUX
 
     dir.cd(data_data_dir);
     if (dir.exists(database_filename)) {
