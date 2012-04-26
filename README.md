@@ -15,7 +15,7 @@ Accessing its functionality:
  * Pick any picture.
  * Tap on the object menu and select *Edit*.
  * Tap on *Facerecognition resetter*.
- * Click the *Reset*, *Protect* and/or *Unprotect" button/s.
+ * Click the *Reset*, *Protect* and/or *Unprotect* button/s.
  * If you have deleted the facerecognition database, close Gallery immediately.
 
 Known Issues:
