@@ -20,6 +20,7 @@ Accessing its functionality:
 
 Known Issues:
 -------------
+ * Only *PR >= 1.2* is currently supported.
  * You will need to reboot to make the icon for the plugin appear properly.
 
 In depth:

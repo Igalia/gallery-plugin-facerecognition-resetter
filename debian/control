@@ -3,13 +3,19 @@ Section: graphics
 Priority: extra
 Maintainer: Andres Gomez <agomez@igalia.com>
 Build-Depends: debhelper (>= 7.0.50),
-               libgallerycore-dev (>= 1.110519.2)
+               libgallerycore-dev (>= 1.120112.1+pr1.2)
 Standards-Version: 3.9.1
 
 Package: gallery-plugin-facerecognition-resetter
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Description: Dummy Gallery plugin to reset the facerecognition database
+Depends: ${misc:Depends}, ${shlibs:Depends},
+         libgallerycore (>= 1.120112.1+pr1.2)
+Description: Dummy Gallery plugin to peform useful operation on the facerecognition DB
+ .
+ This plugin allows to reset, unprotect or protect, correcting
+ some known problems, the facerecognition database.
+ .
+ This plugin requires PR1.2 in order to work
 XB-Maemo-Flags: visible
 XB-Maemo-Display-Name: Gallery Facerecognition Resetter plugin
 XB-Maemo-Icon-26:
@@ -133,5 +139,5 @@ Section: debug
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
          gallery-plugin-facerecognition-resetter (= ${binary:Version})
-Description: Dummy Gallery plugin to reset the facerecognition database
+Description: Dummy Gallery plugin to peform useful operation on the facerecognition DB
  This package contains the debug symbols.
