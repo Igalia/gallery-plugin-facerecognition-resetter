@@ -1,3 +1,13 @@
+gallery-plugin-facerecognition-resetter (0.0.3) unstable; urgency=low
+
+  * When protecting, we correct the DB files and directory's permissions
+    to avoid problems with the journal file created by the SQLite
+    driver.
+  * Added building and running dependency to GalleryCore's version
+    included in Harmattan PR1.2.
+
+ -- Andres Gomez <agomez@igalia.com>  Thu, 26 Apr 2012 17:00:59 +0300
+
 gallery-plugin-facerecognition-resetter (0.0.2) unstable; urgency=low
 
   * Added resetting also the journal file.
