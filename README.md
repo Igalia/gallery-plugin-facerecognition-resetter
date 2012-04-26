@@ -6,7 +6,7 @@ What is it?
 
 *Gallery Facerecognition Resetter Plugin* is not a real filter for the
 Gallery application of the N9 (and N950) MeeGo devices. Instead, it is
-just a why of forcing the deletion or un/protection of the
+just a way of forcing the deletion or un/protection of the
 facerecognition database through its usage from Gallery.
 
 Accessing its functionality:
