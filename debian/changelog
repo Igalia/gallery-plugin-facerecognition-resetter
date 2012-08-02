@@ -1,3 +1,15 @@
+gallery-plugin-facerecognition-resetter (0.0.4) unstable; urgency=low
+
+  * Fixed Typos in README.
+  * Code cleaned.
+  * Package version automatically integrated in About dialog.
+  * Added confirmation dialogs to the button actions.
+  * Removed conflictive and unused icon from installation.
+  * Hardcoded binary dependencies to be able to install in the
+    compatible N950 device.
+
+ -- Andres Gomez <agomez@igalia.com>  Thu, 02 Aug 2012 19:27:13 +0200
+
 gallery-plugin-facerecognition-resetter (0.0.3) unstable; urgency=low
 
   * When protecting, we correct the DB files and directory's permissions
