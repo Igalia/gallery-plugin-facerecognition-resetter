@@ -360,11 +360,11 @@ QGraphicsWidget* GalleryPluginFacerecognitionResetter::createToolBarWidget(QGrap
     GalleryPluginFacerecognitionResetterWidget* pluginWidget =
         new GalleryPluginFacerecognitionResetterWidget(parent);
     connect(pluginWidget, SIGNAL(resetFacerecognitionDatabaseButtonClicked()),
-            SLOT(performEditOperation()));
+            SLOT(onResetFacerecognitionDatabaseButtonClicked()));
     connect(pluginWidget, SIGNAL(protectFacerecognitionDatabaseButtonClicked()),
-            SLOT(protectDBOperation()));
+            SLOT(onProtectFacerecognitionDatabaseButtonClicked()));
     connect(pluginWidget, SIGNAL(unprotectFacerecognitionDatabaseButtonClicked()),
-            SLOT(unprotectDBOperation()));
+            SLOT(onUnprotectFacerecognitionDatabaseButtonClicked()));
     connect(pluginWidget, SIGNAL(aboutLinkActivated(QString)),
             SLOT(onAboutLinkActivated(QString)));
 
@@ -422,6 +422,36 @@ void GalleryPluginFacerecognitionResetter::activate()
                    "the Facerecognition database.<br />"
                    "Just click on the Reset, "
                    "Protect and/or Unprotect button/s.");
+}
+
+void GalleryPluginFacerecognitionResetter::onResetFacerecognitionDatabaseButtonClicked()
+{
+    MMessageBox* messageBox =
+        showMessageBox("Delete?", "Do you really want to delete the DB?");
+
+    messageBox->addButton(M::CancelButton);
+    connect(messageBox, SIGNAL(accepted()),
+            this, SLOT(performEditOperation()));
+}
+
+void GalleryPluginFacerecognitionResetter::onProtectFacerecognitionDatabaseButtonClicked()
+{
+    MMessageBox* messageBox =
+        showMessageBox("Protect?", "Do you really want to protect the DB?");
+
+    messageBox->addButton(M::CancelButton);
+    connect(messageBox, SIGNAL(accepted()),
+            this, SLOT(protectDBOperation()));
+}
+
+void GalleryPluginFacerecognitionResetter::onUnprotectFacerecognitionDatabaseButtonClicked()
+{
+    MMessageBox* messageBox =
+        showMessageBox("Unprotect?", "Do you really want to unprotect the DB?");
+
+    messageBox->addButton(M::CancelButton);
+    connect(messageBox, SIGNAL(accepted()),
+            this, SLOT(unprotectDBOperation()));
 }
 
 void GalleryPluginFacerecognitionResetter::protectDBOperation()

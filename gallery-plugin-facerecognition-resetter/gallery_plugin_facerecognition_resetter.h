@@ -74,10 +74,19 @@ public Q_SLOTS:
     //! \reimp
     void activate();
 
+    //! Invoked when pushed the reset DB button
+    void onResetFacerecognitionDatabaseButtonClicked();
+
     //! Invoked when pushed the protect DB button
-    void protectDBOperation();
+    void onProtectFacerecognitionDatabaseButtonClicked();
 
     //! Invoked when pushed the unprotect DB button
+    void onUnprotectFacerecognitionDatabaseButtonClicked();
+
+    //! Invoked when accepted the dialog for protecting the DB
+    void protectDBOperation();
+
+    //! Invoked when accepted the dialog for unprotecting DB
     void unprotectDBOperation();
 
     //! Invoked when a link in the about notice has been activated
