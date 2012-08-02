@@ -31,6 +31,9 @@ DEFINES += GALLERYCORE_GROUP=\\\"$${GALLERYCORE_GROUP}\\\"
 DEFINES += REGULAR_USER=\\\"$${REGULAR_USER}\\\"
 DEFINES += REGULAR_GROUP=\\\"$${REGULAR_GROUP}\\\"
 
+PACKAGEVERSION = $$system(head -n 1 ../debian/changelog | grep -o [0-9].[0-9].[0-9])
+DEFINES += "PACKAGEVERSION=\\\"$$PACKAGEVERSION\\\""
+
 HEADERS += gallery_plugin_facerecognition_resetter.h \
            gallery_plugin_facerecognition_resetter_p.h \
            gallery_plugin_facerecognition_resetter_widget.h \
