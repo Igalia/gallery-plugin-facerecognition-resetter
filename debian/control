@@ -3,13 +3,19 @@ Section: graphics
 Priority: extra
 Maintainer: Andres Gomez <agomez@igalia.com>
 Build-Depends: debhelper (>= 7.0.50),
-               libgallerycore-dev (>= 1.120112.1+pr1.2)
+               libgallerycore-dev (>= 1.120111.1+pr1.2)
 Standards-Version: 3.9.1
 
 Package: gallery-plugin-facerecognition-resetter
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
-         libgallerycore (>= 1.120112.1+pr1.2)
+Depends: ${misc:Depends},
+         libc6 (>= 2.4),
+         libgallerycore (>= 1.120111.1+pr1.2),
+         libgcc1 (>= 1:4.1.1),
+         libmeegotouchcore0,
+         libqtcore4 (>= 4.7.4~git20120112),
+         libqtgui4 (>= 4.7.4~git20120112),
+         libstdc++6 (>= 4.4.0)
 Description: Dummy Gallery plugin to peform useful operation on the facerecognition DB
  .
  This plugin allows to reset, unprotect or protect, correcting
