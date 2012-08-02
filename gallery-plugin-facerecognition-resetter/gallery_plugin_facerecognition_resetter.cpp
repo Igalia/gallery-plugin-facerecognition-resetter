@@ -461,7 +461,7 @@ void GalleryPluginFacerecognitionResetter::onAboutLinkActivated(const QString &l
     if (link.toLower().startsWith("http") || link.toLower().startsWith("mailto")) {
         QDesktopServices::openUrl(QUrl(link));
     } else {
-        showMessageBox("Facerecognition Resetter plugin - 0.0.3",
+        showMessageBox(QString("Facerecognition Resetter plugin - %1").arg(PACKAGEVERSION),
                        "Copyright (c) 2012 Igalia S.L."
                        "<br /><br />"
                        "<a href=\"mailto:agomez@igalia.com\">agomez@igalia.com</a> | "
